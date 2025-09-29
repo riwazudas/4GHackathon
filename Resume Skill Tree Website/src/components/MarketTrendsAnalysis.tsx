@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Progress } from './ui/progress';
-import { TrendingUp, TrendingDown, Brain, Zap, Target, Globe, Calendar, DollarSign } from 'lucide-react';
+import { Skeleton } from './ui/skeleton';
+import { TrendingUp, TrendingDown, Brain, Zap, Target, Globe, Calendar, DollarSign, RefreshCw, AlertCircle } from 'lucide-react';
+import ApiService from './services/ApiService';
 
 interface MarketTrendsAnalysisProps {
   studentInterests: string[];
@@ -34,65 +36,62 @@ interface EmergingField {
 
 export function MarketTrendsAnalysis({ studentInterests }: MarketTrendsAnalysisProps) {
   const [selectedField, setSelectedField] = useState<string>('technology');
+  const [marketData, setMarketData] = useState<any>(null);
+  const [industryNews, setIndustryNews] = useState<any[]>([]);
+  const [marketConditions, setMarketConditions] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const getMarketTrends = (): Record<string, Trend> => {
-    return {
-      technology: {
-        field: "Technology & AI",
-        growth: 25,
-        demand: 'High',
-        avgSalary: "$95,000 - $180,000",
-        jobOpenings: 145000,
-        futureOutlook: "Exponential growth expected with AI integration across all industries",
-        keySkills: ["Machine Learning", "Cloud Computing", "Cybersecurity", "Data Analysis"],
-        emergingRoles: ["AI Ethics Specialist", "Prompt Engineer", "Quantum Computing Developer"],
-        automation: 15
-      },
-      healthcare: {
-        field: "Healthcare & Biotechnology",
-        growth: 18,
-        demand: 'High',
-        avgSalary: "$85,000 - $160,000",
-        jobOpenings: 89000,
-        futureOutlook: "Steady growth driven by aging population and medical advances",
-        keySkills: ["Genomics", "Telemedicine", "Health Informatics", "Personalized Medicine"],
-        emergingRoles: ["Genetic Counselor", "Health Data Analyst", "Telemedicine Specialist"],
-        automation: 25
-      },
-      sustainability: {
-        field: "Sustainability & Green Energy",
-        growth: 22,
-        demand: 'Emerging',
-        avgSalary: "$75,000 - $140,000",
-        jobOpenings: 67000,
-        futureOutlook: "Rapid expansion as climate action becomes priority",
-        keySkills: ["Renewable Energy", "Environmental Science", "Sustainability Strategy", "Carbon Management"],
-        emergingRoles: ["Carbon Credit Analyst", "Sustainability Consultant", "Green Finance Specialist"],
-        automation: 20
-      },
-      creative: {
-        field: "Creative & Digital Media",
-        growth: 12,
-        demand: 'Medium',
-        avgSalary: "$65,000 - $120,000",
-        jobOpenings: 52000,
-        futureOutlook: "Steady growth with digital transformation and content demand",
-        keySkills: ["Digital Marketing", "Content Creation", "UX/UI Design", "Brand Strategy"],
-        emergingRoles: ["Metaverse Designer", "Creator Economy Manager", "Digital Experience Architect"],
-        automation: 35
-      },
-      business: {
-        field: "Business & Entrepreneurship",
-        growth: 15,
-        demand: 'High',
-        avgSalary: "$80,000 - $150,000",
-        jobOpenings: 98000,
-        futureOutlook: "Continuous demand with emphasis on digital transformation",
-        keySkills: ["Data Analytics", "Digital Marketing", "Project Management", "Strategic Planning"],
-        emergingRoles: ["Growth Hacker", "Business Intelligence Analyst", "Digital Transformation Manager"],
-        automation: 30
+  // Fetch real market data
+  useEffect(() => {
+    const fetchMarketData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const apiService = ApiService.getInstance();
+        
+        // Fetch market trends, industry news, and market conditions in parallel
+        const [trendsData, newsData, conditionsData] = await Promise.all([
+          apiService.fetchJobMarketTrends(selectedField),
+          apiService.fetchIndustryNews(selectedField),
+          apiService.fetchMarketConditions()
+        ]);
+
+        setMarketData(trendsData[0] || null);
+        setIndustryNews(newsData);
+        setMarketConditions(conditionsData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch market data');
+        console.error('Market data fetch error:', err);
+      } finally {
+        setLoading(false);
       }
     };
+
+    fetchMarketData();
+  }, [selectedField]);
+
+  const handleRefreshData = async () => {
+    const apiService = ApiService.getInstance();
+    setLoading(true);
+    
+    try {
+      const [trendsData, newsData, conditionsData] = await Promise.all([
+        apiService.fetchJobMarketTrends(selectedField),
+        apiService.fetchIndustryNews(selectedField),
+        apiService.fetchMarketConditions()
+      ]);
+
+      setMarketData(trendsData[0] || null);
+      setIndustryNews(newsData);
+      setMarketConditions(conditionsData);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to refresh data');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getEmergingFields = (): EmergingField[] => {
@@ -136,9 +135,8 @@ export function MarketTrendsAnalysis({ studentInterests }: MarketTrendsAnalysisP
     ];
   };
 
-  const trends = getMarketTrends();
   const emergingFields = getEmergingFields();
-  const currentTrend = trends[selectedField];
+  const currentTrend = marketData;
 
   const getDemandColor = (demand: string) => {
     switch (demand) {
@@ -159,9 +157,21 @@ export function MarketTrendsAnalysis({ studentInterests }: MarketTrendsAnalysisP
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
-            Market Trends & Future Outlook
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Market Trends & Future Outlook
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleRefreshData}
+              disabled={loading}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              Refresh Data
+            </Button>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -170,19 +180,69 @@ export function MarketTrendsAnalysis({ studentInterests }: MarketTrendsAnalysisP
           </p>
           
           <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-6">
-            {Object.entries(trends).map(([key, trend]) => (
+            {['technology', 'healthcare', 'sustainability', 'creative', 'business'].map((key) => (
               <Button
                 key={key}
                 variant={selectedField === key ? "default" : "outline"}
                 onClick={() => setSelectedField(key)}
                 className="text-xs h-auto py-2"
+                disabled={loading}
               >
-                {trend.field.split(' & ')[0]}
+                {key.charAt(0).toUpperCase() + key.slice(1)}
               </Button>
             ))}
           </div>
 
-          {currentTrend && (
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-red-600" />
+                <span className="text-sm text-red-800">{error}</span>
+              </div>
+            </div>
+          )}
+
+          {loading ? (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <Card key={i} className="p-4">
+                    <Skeleton className="h-4 w-20 mb-2" />
+                    <Skeleton className="h-8 w-16 mb-1" />
+                    <Skeleton className="h-3 w-24" />
+                  </Card>
+                ))}
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <Skeleton className="h-6 w-32" />
+                  </CardHeader>
+                  <CardContent>
+                    <Skeleton className="h-4 w-full mb-4" />
+                    <Skeleton className="h-4 w-3/4 mb-4" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-6 w-20" />
+                      <Skeleton className="h-6 w-24" />
+                      <Skeleton className="h-6 w-28" />
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <Skeleton className="h-6 w-28" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <Skeleton className="h-12 w-full" />
+                      <Skeleton className="h-12 w-full" />
+                      <Skeleton className="h-12 w-full" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          ) : currentTrend && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Card className="p-4">
@@ -245,6 +305,12 @@ export function MarketTrendsAnalysis({ studentInterests }: MarketTrendsAnalysisP
                           ))}
                         </div>
                       </div>
+                      
+                      {currentTrend.source && (
+                        <div className="text-xs text-muted-foreground">
+                          Source: {currentTrend.source}
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -271,6 +337,82 @@ export function MarketTrendsAnalysis({ studentInterests }: MarketTrendsAnalysisP
           )}
         </CardContent>
       </Card>
+
+      {/* Real-time Market Conditions */}
+      {marketConditions && (
+        <Card className="bg-blue-50 border-blue-200">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Globe className="h-5 w-5" />
+              Current Market Conditions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <h4 className="text-sm font-medium mb-2">Economic Indicators</h4>
+                <div className="space-y-1 text-sm">
+                  <div>GDP Growth: {marketConditions.economicIndicators.gdpGrowth}%</div>
+                  <div>Unemployment: {marketConditions.economicIndicators.unemploymentRate}%</div>
+                  <div>Inflation: {marketConditions.economicIndicators.inflationRate}%</div>
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="text-sm font-medium mb-2">Hot Skills</h4>
+                <div className="space-y-1">
+                  {marketConditions.hotSkills.slice(0, 3).map((skill: any) => (
+                    <div key={skill.skill} className="flex justify-between text-sm">
+                      <span>{skill.skill}</span>
+                      <Badge variant="secondary" className="text-xs">{skill.growth}</Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="text-sm font-medium mb-2">Emerging Industries</h4>
+                <div className="flex flex-wrap gap-1">
+                  {marketConditions.emergingIndustries.slice(0, 4).map((industry: string) => (
+                    <Badge key={industry} variant="outline" className="text-xs">
+                      {industry}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-4 text-xs text-muted-foreground">
+              Last updated: {new Date(marketConditions.lastUpdated).toLocaleString()}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Industry News */}
+      {industryNews.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Latest Industry News</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {industryNews.slice(0, 3).map((news, index) => (
+                <div key={index} className="border-l-4 border-blue-200 pl-4">
+                  <h4 className="font-medium">{news.title}</h4>
+                  <p className="text-sm text-muted-foreground mt-1">{news.summary}</p>
+                  <div className="flex justify-between items-center mt-2">
+                    <span className="text-xs text-muted-foreground">{news.source}</span>
+                    <Badge variant="outline" className="text-xs">
+                      {news.relevance} Relevance
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>

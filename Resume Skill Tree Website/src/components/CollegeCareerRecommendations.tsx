@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Progress } from './ui/progress';
-import { GraduationCap, MapPin, DollarSign, Clock, TrendingUp, Star, BookOpen, Users } from 'lucide-react';
+import { Skeleton } from './ui/skeleton';
+import { GraduationCap, MapPin, DollarSign, Clock, TrendingUp, Star, BookOpen, Users, RefreshCw, AlertCircle } from 'lucide-react';
+import ApiService from './services/ApiService';
 
 interface StudentData {
   name: string;
@@ -54,161 +56,65 @@ interface LearningResource {
 
 export function CollegeCareerRecommendations({ studentData }: CollegeCareerRecommendationsProps) {
   const [selectedTab, setSelectedTab] = useState('colleges');
+  const [colleges, setColleges] = useState<College[]>([]);
+  const [careers, setCareers] = useState<Career[]>([]);
+  const [learningResources, setLearningResources] = useState<LearningResource[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const getRecommendedColleges = (): College[] => {
-    const colleges: College[] = [
-      {
-        name: "Massachusetts Institute of Technology",
-        location: "Cambridge, MA",
-        ranking: 1,
-        acceptanceRate: "7%",
-        tuition: "$53,450",
-        matchScore: 95,
-        strengths: ["Engineering", "Computer Science", "Research"],
-        programs: ["Computer Science", "Electrical Engineering", "Aerospace Engineering"],
-        campusLife: "Highly collaborative, innovation-focused environment"
-      },
-      {
-        name: "Stanford University",
-        location: "Stanford, CA",
-        ranking: 2,
-        acceptanceRate: "4%",
-        tuition: "$56,169",
-        matchScore: 92,
-        strengths: ["Technology", "Entrepreneurship", "Research"],
-        programs: ["Computer Science", "Engineering", "Business"],
-        campusLife: "Entrepreneurial spirit, beautiful campus, diverse student body"
-      },
-      {
-        name: "University of California, Berkeley",
-        location: "Berkeley, CA",
-        ranking: 3,
-        acceptanceRate: "17%",
-        tuition: "$14,253 (in-state)",
-        matchScore: 88,
-        strengths: ["Public Research", "Engineering", "Liberal Arts"],
-        programs: ["EECS", "Engineering", "Sciences"],
-        campusLife: "Diverse, politically active, research-oriented"
-      },
-      {
-        name: "Carnegie Mellon University",
-        location: "Pittsburgh, PA",
-        ranking: 4,
-        acceptanceRate: "17%",
-        tuition: "$57,560",
-        matchScore: 90,
-        strengths: ["Computer Science", "Engineering", "Arts"],
-        programs: ["Computer Science", "Robotics", "Information Systems"],
-        campusLife: "Tech-focused, collaborative, interdisciplinary"
+  // Fetch real data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const apiService = ApiService.getInstance();
+        
+        // Fetch all data in parallel
+        const [collegesData, careersData, resourcesData] = await Promise.all([
+          apiService.fetchUniversityData(studentData),
+          apiService.fetchCareerData(studentData.interests),
+          apiService.fetchLearningResources(studentData.interests)
+        ]);
+
+        setColleges(collegesData);
+        setCareers(careersData);
+        setLearningResources(resourcesData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch recommendations');
+        console.error('Recommendations fetch error:', err);
+      } finally {
+        setLoading(false);
       }
-    ];
+    };
 
-    // Filter based on student interests and strengths
-    return colleges.sort((a, b) => b.matchScore - a.matchScore);
+    fetchData();
+  }, [studentData]);
+
+  const handleRefreshData = async () => {
+    const apiService = ApiService.getInstance();
+    setLoading(true);
+    
+    try {
+      const [collegesData, careersData, resourcesData] = await Promise.all([
+        apiService.fetchUniversityData(studentData),
+        apiService.fetchCareerData(studentData.interests),
+        apiService.fetchLearningResources(studentData.interests)
+      ]);
+
+      setColleges(collegesData);
+      setCareers(careersData);
+      setLearningResources(resourcesData);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to refresh data');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const getRecommendedCareers = (): Career[] => {
-    const careers: Career[] = [
-      {
-        title: "Software Engineer",
-        description: "Design, develop, and maintain software applications and systems",
-        averageSalary: "$105,000 - $180,000",
-        growthRate: "25% (Much faster than average)",
-        education: "Bachelor's in Computer Science or related field",
-        skills: ["Programming", "Problem Solving", "System Design", "Collaboration"],
-        workEnvironment: "Tech companies, startups, remote work options",
-        matchScore: 94
-      },
-      {
-        title: "Data Scientist",
-        description: "Analyze complex data to help organizations make informed decisions",
-        averageSalary: "$95,000 - $165,000",
-        growthRate: "35% (Much faster than average)",
-        education: "Bachelor's/Master's in Data Science, Statistics, or Computer Science",
-        skills: ["Statistics", "Programming", "Machine Learning", "Communication"],
-        workEnvironment: "Various industries, research institutions, consulting",
-        matchScore: 89
-      },
-      {
-        title: "UX/UI Designer",
-        description: "Create user-friendly digital interfaces and experiences",
-        averageSalary: "$75,000 - $130,000",
-        growthRate: "13% (Faster than average)",
-        education: "Bachelor's in Design, HCI, or related field",
-        skills: ["Design", "User Research", "Prototyping", "Empathy"],
-        workEnvironment: "Design agencies, tech companies, freelance",
-        matchScore: 85
-      },
-      {
-        title: "Biomedical Engineer",
-        description: "Develop medical devices and solutions for healthcare challenges",
-        averageSalary: "$88,000 - $140,000",
-        growthRate: "6% (As fast as average)",
-        education: "Bachelor's in Biomedical Engineering or related field",
-        skills: ["Engineering", "Biology", "Problem Solving", "Innovation"],
-        workEnvironment: "Medical device companies, hospitals, research labs",
-        matchScore: 82
-      }
-    ];
 
-    return careers.sort((a, b) => b.matchScore - a.matchScore);
-  };
-
-  const getLearningResources = (): LearningResource[] => {
-    const resources: LearningResource[] = [
-      {
-        title: "CS50: Introduction to Computer Science",
-        type: 'Course',
-        provider: "Harvard University (edX)",
-        duration: "12 weeks",
-        level: 'Beginner',
-        rating: 4.9,
-        description: "Comprehensive introduction to computer science and programming"
-      },
-      {
-        title: "Python for Everybody",
-        type: 'Course',
-        provider: "University of Michigan (Coursera)",
-        duration: "8 weeks",
-        level: 'Beginner',
-        rating: 4.8,
-        description: "Learn Python programming from scratch with practical projects"
-      },
-      {
-        title: "The Design of Everyday Things",
-        type: 'Book',
-        provider: "Don Norman",
-        duration: "2-3 weeks",
-        level: 'Beginner',
-        rating: 4.7,
-        description: "Essential reading for understanding user-centered design principles"
-      },
-      {
-        title: "AWS Certified Cloud Practitioner",
-        type: 'Certification',
-        provider: "Amazon Web Services",
-        duration: "3-6 months",
-        level: 'Intermediate',
-        rating: 4.6,
-        description: "Foundational certification for cloud computing knowledge"
-      },
-      {
-        title: "Khan Academy - Computer Programming",
-        type: 'Platform',
-        provider: "Khan Academy",
-        duration: "Self-paced",
-        level: 'Beginner',
-        rating: 4.5,
-        description: "Interactive programming courses and projects"
-      }
-    ];
-
-    return resources;
-  };
-
-  const colleges = getRecommendedColleges();
-  const careers = getRecommendedCareers();
-  const learningResources = getLearningResources();
 
   const getMatchColor = (score: number) => {
     if (score >= 90) return "text-green-600 bg-green-50";
@@ -230,11 +136,33 @@ export function CollegeCareerRecommendations({ studentData }: CollegeCareerRecom
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Personalized Recommendations for {studentData.name}</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Based on your interests in {studentData.interests.slice(0, 2).join(', ')} and your academic strengths
-          </p>
+          <CardTitle className="flex items-center justify-between">
+            <div>
+              <h2>Personalized Recommendations for {studentData.name}</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Based on your interests in {studentData.interests.slice(0, 2).join(', ')} and your academic strengths
+              </p>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleRefreshData}
+              disabled={loading}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              Refresh Data
+            </Button>
+          </CardTitle>
         </CardHeader>
+        {error && (
+          <div className="mx-6 mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+              <span className="text-sm text-red-800">{error}</span>
+            </div>
+          </div>
+        )}
       </Card>
 
       <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-6">
@@ -254,7 +182,33 @@ export function CollegeCareerRecommendations({ studentData }: CollegeCareerRecom
         </TabsList>
 
         <TabsContent value="colleges" className="space-y-4">
-          {colleges.map((college, index) => (
+          {loading ? (
+            <div className="space-y-4">
+              {[1, 2, 3, 4].map((i) => (
+                <Card key={i}>
+                  <CardContent className="pt-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="space-y-2">
+                        <Skeleton className="h-6 w-64" />
+                        <Skeleton className="h-4 w-32" />
+                      </div>
+                      <Skeleton className="h-6 w-20" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-4 w-28" />
+                    </div>
+                    <div className="space-y-3">
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-3/4" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            colleges.map((college, index) => (
             <Card key={index}>
               <CardContent className="pt-6">
                 <div className="flex justify-between items-start mb-4">
@@ -302,11 +256,40 @@ export function CollegeCareerRecommendations({ studentData }: CollegeCareerRecom
                 </div>
               </CardContent>
             </Card>
-          ))}
+            ))
+          )}
         </TabsContent>
 
         <TabsContent value="careers" className="space-y-4">
-          {careers.map((career, index) => (
+          {loading ? (
+            <div className="space-y-4">
+              {[1, 2, 3, 4].map((i) => (
+                <Card key={i}>
+                  <CardContent className="pt-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="space-y-2">
+                        <Skeleton className="h-6 w-48" />
+                        <Skeleton className="h-4 w-64" />
+                      </div>
+                      <Skeleton className="h-6 w-20" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-4 w-28" />
+                      </div>
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-36" />
+                        <Skeleton className="h-4 w-32" />
+                      </div>
+                    </div>
+                    <Skeleton className="h-4 w-full" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            careers.map((career, index) => (
             <Card key={index}>
               <CardContent className="pt-6">
                 <div className="flex justify-between items-start mb-4">
@@ -352,12 +335,42 @@ export function CollegeCareerRecommendations({ studentData }: CollegeCareerRecom
                 </div>
               </CardContent>
             </Card>
-          ))}
+            ))
+          )}
         </TabsContent>
 
         <TabsContent value="resources" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {learningResources.map((resource, index) => (
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <Card key={i}>
+                  <CardContent className="pt-6">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="h-4 w-4" />
+                        <Skeleton className="h-5 w-48" />
+                      </div>
+                      <Skeleton className="h-5 w-16" />
+                    </div>
+                    <Skeleton className="h-4 w-full mb-3" />
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-4 w-12" />
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-5 w-16" />
+                      </div>
+                    </div>
+                    <Skeleton className="h-8 w-full mt-4" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {learningResources.map((resource, index) => (
               <Card key={index}>
                 <CardContent className="pt-6">
                   <div className="flex items-start justify-between mb-3">
@@ -389,8 +402,9 @@ export function CollegeCareerRecommendations({ studentData }: CollegeCareerRecom
                   </Button>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>

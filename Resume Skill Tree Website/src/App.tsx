@@ -3,10 +3,12 @@ import { StudentDataInput } from './components/StudentDataInput';
 import { StudentStrengthsAnalysis } from './components/StudentStrengthsAnalysis';
 import { CollegeCareerRecommendations } from './components/CollegeCareerRecommendations';
 import { MarketTrendsAnalysis } from './components/MarketTrendsAnalysis';
+import { StudentPathwayPlanner } from './components/StudentPathwayPlanner';
+import { DataSourceStatus } from './components/DataSourceStatus';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
 import { Badge } from './components/ui/badge';
-import { GraduationCap, Brain, Target, TrendingUp, Star, Users, BookOpen, Lightbulb } from 'lucide-react';
+import { GraduationCap, Brain, Target, TrendingUp, Star, Users, BookOpen, Lightbulb, Map } from 'lucide-react';
 
 interface StudentData {
   name: string;
@@ -55,7 +57,19 @@ export default function App() {
           </div>
 
           {/* Features Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
+            <Card className="text-center">
+              <CardHeader>
+                <Map className="h-8 w-8 mx-auto mb-2 text-emerald-600" />
+                <CardTitle className="text-lg">Career Pathway</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Step-by-step personalized roadmap with actionable goals and milestones to achieve your career aspirations
+                </CardDescription>
+              </CardContent>
+            </Card>
+
             <Card className="text-center">
               <CardHeader>
                 <Brain className="h-8 w-8 mx-auto mb-2 text-blue-600" />
@@ -64,18 +78,6 @@ export default function App() {
               <CardContent>
                 <CardDescription>
                   Comprehensive analysis of academic performance, extracurricular activities, and personal traits
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center">
-              <CardHeader>
-                <Target className="h-8 w-8 mx-auto mb-2 text-indigo-600" />
-                <CardTitle className="text-lg">Career Mapping</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Personalized career pathways based on your unique profile and interests
                 </CardDescription>
               </CardContent>
             </Card>
@@ -100,6 +102,18 @@ export default function App() {
               <CardContent>
                 <CardDescription>
                   Real-time market trends and future skill demands in your areas of interest
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center">
+              <CardHeader>
+                <Target className="h-8 w-8 mx-auto mb-2 text-indigo-600" />
+                <CardTitle className="text-lg">Progress Tracking</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Monitor your progress and stay motivated with visual indicators and achievement milestones
                 </CardDescription>
               </CardContent>
             </Card>
@@ -248,11 +262,15 @@ export default function App() {
         </div>
 
         {/* Main Content */}
-        <Tabs defaultValue="strengths" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+        <Tabs defaultValue="pathway" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="pathway" className="flex items-center gap-2">
+              <Map className="h-4 w-4" />
+              Career Pathway
+            </TabsTrigger>
             <TabsTrigger value="strengths" className="flex items-center gap-2">
               <Brain className="h-4 w-4" />
-              Strengths & Paths
+              Strengths & Analysis
             </TabsTrigger>
             <TabsTrigger value="colleges" className="flex items-center gap-2">
               <GraduationCap className="h-4 w-4" />
@@ -267,6 +285,10 @@ export default function App() {
               Student Profile
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="pathway" className="space-y-6">
+            <StudentPathwayPlanner studentData={studentData} />
+          </TabsContent>
 
           <TabsContent value="strengths" className="space-y-6">
             <StudentStrengthsAnalysis 
@@ -286,6 +308,9 @@ export default function App() {
           </TabsContent>
 
           <TabsContent value="profile" className="space-y-6">
+            {/* Data Source Status */}
+            <DataSourceStatus />
+            
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>

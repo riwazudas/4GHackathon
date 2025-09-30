@@ -49,10 +49,10 @@ export default function App() {
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4">
-              Student Career Guidance Platform
+              Australian Student Career Guidance Platform
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-              AI-powered career pathway analysis for students based on academic performance, interests, and market trends
+              AI-powered career pathway analysis for Australian secondary students based on academic performance, interests, and market trends
             </p>
           </div>
 
@@ -85,11 +85,11 @@ export default function App() {
             <Card className="text-center">
               <CardHeader>
                 <GraduationCap className="h-8 w-8 mx-auto mb-2 text-purple-600" />
-                <CardTitle className="text-lg">College Guidance</CardTitle>
+                <CardTitle className="text-lg">University & TAFE Guidance</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Targeted college and course recommendations aligned with your career goals
+                  Targeted university, TAFE, and apprenticeship recommendations aligned with your career goals
                 </CardDescription>
               </CardContent>
             </Card>
@@ -132,7 +132,7 @@ export default function App() {
                   </div>
                   <h4 className="font-medium mb-2">Input Data</h4>
                   <p className="text-sm text-muted-foreground">
-                    Share your academic records, activities, interests, and feedback from teachers and parents
+                    Share your Year 10-12 results, co-curricular activities, interests, and feedback from teachers and parents
                   </p>
                 </div>
                 
@@ -152,7 +152,7 @@ export default function App() {
                   </div>
                   <h4 className="font-medium mb-2">Get Recommendations</h4>
                   <p className="text-sm text-muted-foreground">
-                    Receive personalized career paths, college suggestions, and skill development plans
+                    Receive personalised career paths, university/TAFE suggestions, and skill development plans
                   </p>
                 </div>
                 
@@ -180,41 +180,43 @@ export default function App() {
             <button
               onClick={() => {
                 const demoData = {
-                  name: "Alex Smith",
-                  grade: "11",
+                  name: "Alex Chen",
+                  grade: "Year 11",
                   age: "16",
-                  school: "Lincoln High School",
+                  school: "Melbourne Secondary College",
                   subjects: {
                     mathematics: "A",
-                    science: "A+",
+                    chemistry: "A+",
+                    physics: "A",
                     english: "B+",
-                    socialStudies: "B",
-                    arts: "A",
-                    languages: "B+"
+                    economics: "B",
+                    informationTechnology: "A+"
                   },
-                  gpa: "3.8",
-                  academicRank: "Top 15%",
-                  clubs: ["Science Club", "Robotics Team", "Math Club"],
-                  leadership: ["Science Club President"],
-                  interests: ["Technology & Programming", "Science & Research", "Engineering"],
-                  careerAspiration: "Software Engineer or Research Scientist",
+                  gpa: "ATAR Est. 95+",
+                  academicRank: "Top 10%",
+                  clubs: ["Science Society", "Robotics Club", "Coding Club", "Debate Team"],
+                  leadership: ["Science Society President", "Peer Tutor"],
+                  interests: ["Technology & Programming", "Science & Research", "Engineering", "Innovation"],
+                  careerAspiration: "Software Engineer or Data Scientist",
                   workStyle: "team",
                   teacherFeedback: {
-                    strengths: "Excellent problem-solving skills, strong in STEM subjects",
-                    improvements: "Could improve presentation skills",
-                    recommendations: "Consider advanced math and computer science courses"
+                    strengths: "Exceptional analytical thinking, excellent in STEM subjects, natural leadership qualities",
+                    improvements: "Could develop stronger presentation skills for university applications",
+                    recommendations: "Consider Specialist Mathematics and Software Development for Year 12. Explore university early entry programs."
                   },
-                  parentObservations: "Very curious about how things work, spends time coding",
-                  familyExpectations: "Supportive of any career choice",
+                  parentObservations: "Very curious about technology trends, spends time on coding projects and online courses",
+                  familyExpectations: "Supportive of STEM career path, encourage university education",
                   academicStrengths: [
                     { subject: "Mathematics", level: 95, category: "Academic" },
-                    { subject: "Science", level: 98, category: "Academic" },
-                    { subject: "Arts", level: 95, category: "Academic" }
+                    { subject: "Chemistry", level: 98, category: "Academic" },
+                    { subject: "Information Technology", level: 98, category: "Academic" },
+                    { subject: "Physics", level: 95, category: "Academic" }
                   ],
                   personalityTraits: [
                     { trait: "Leadership", level: 90, category: "Personality" },
                     { trait: "Problem Solving", level: 95, category: "Personality" },
-                    { trait: "Teamwork", level: 85, category: "Personality" }
+                    { trait: "Teamwork", level: 85, category: "Personality" },
+                    { trait: "Innovation", level: 92, category: "Personality" }
                   ],
                   profileCompleteness: 95
                 };
@@ -239,7 +241,7 @@ export default function App() {
             <div>
               <h1 className="text-3xl font-bold">{studentData.name}</h1>
               <p className="text-muted-foreground">
-                Grade {studentData.grade} • {studentData.school} • GPA: {studentData.gpa}
+                {studentData.grade} • {studentData.school} • {studentData.gpa}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -274,7 +276,7 @@ export default function App() {
             </TabsTrigger>
             <TabsTrigger value="colleges" className="flex items-center gap-2">
               <GraduationCap className="h-4 w-4" />
-              Colleges & Careers
+              Universities & Careers
             </TabsTrigger>
             <TabsTrigger value="trends" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
@@ -337,7 +339,7 @@ export default function App() {
                         <h4 className="text-sm font-medium mb-2">Activities & Leadership</h4>
                         <div className="space-y-2">
                           <div>
-                            <span className="text-xs text-muted-foreground">Clubs:</span>
+                            <span className="text-xs text-muted-foreground">Co-curricular Activities:</span>
                             <div className="flex flex-wrap gap-1 mt-1">
                               {studentData.clubs.slice(0, 3).map((club) => (
                                 <Badge key={club} variant="outline" className="text-xs">

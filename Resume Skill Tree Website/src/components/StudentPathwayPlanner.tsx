@@ -85,9 +85,9 @@ export function StudentPathwayPlanner({ studentData }: StudentPathwayPlannerProp
     });
 
     steps.push({
-      id: 'join-relevant-clubs',
-      title: 'Expand Extracurricular Activities',
-      description: `Join clubs related to ${studentData.interests.slice(0, 2).join(' and ')} to build experience`,
+      id: 'join-relevant-activities',
+      title: 'Expand Co-curricular Activities',
+      description: `Join societies and activities related to ${studentData.interests.slice(0, 2).join(' and ')} to build experience`,
       type: 'activity',
       timeline: 'immediate',
       priority: 'high',
@@ -95,22 +95,22 @@ export function StudentPathwayPlanner({ studentData }: StudentPathwayPlannerProp
       icon: Users,
       category: 'Leadership & Activities',
       estimatedTime: '1 month to join',
-      resources: ['School club directory', 'Club meetings', 'Activity fairs']
+      resources: ['School society directory', 'Activity meetings', 'School expo days']
     });
 
     // Short-term steps (3-12 months)
     steps.push({
-      id: 'advanced-courses',
-      title: 'Enroll in Advanced Courses',
-      description: `Take AP/Honors courses in ${studentData.academicStrengths.slice(0, 2).map(s => s.subject).join(' and ')}`,
+      id: 'advanced-subjects',
+      title: 'Select Advanced Year 12 Subjects',
+      description: `Choose advanced subjects like Specialist Mathematics, ${studentData.academicStrengths.slice(0, 2).map(s => s.subject).join(' and ')} for Year 12`,
       type: 'academic',
       timeline: 'short-term',
       priority: 'high',
       completed: false,
       icon: GraduationCap,
       category: 'Academic Excellence',
-      estimatedTime: 'Next semester',
-      resources: ['Guidance counselor', 'Course catalog', 'Prerequisites check']
+      estimatedTime: 'Subject selection period',
+      resources: ['Careers counsellor', 'Subject selection guide', 'University prerequisites', 'VTAC/UAC guides']
     });
 
     if (studentData.interests.some(interest => 
@@ -129,14 +129,14 @@ export function StudentPathwayPlanner({ studentData }: StudentPathwayPlannerProp
         icon: Code,
         category: 'Technical Skills',
         estimatedTime: '6-8 months',
-        resources: ['Codecademy', 'freeCodeCamp', 'GitHub', 'Local coding bootcamps']
+        resources: ['Codecademy', 'freeCodeCamp', 'GitHub', 'TAFE coding courses', 'CoderDojo', 'Australian Computer Society']
       });
     }
 
     steps.push({
       id: 'leadership-role',
       title: 'Take on Leadership Position',
-      description: 'Seek leadership role in clubs or start a new initiative',
+      description: 'Seek leadership role in school societies or start a new initiative like a sustainability program',
       type: 'activity',
       timeline: 'short-term',
       priority: 'medium',
@@ -144,7 +144,7 @@ export function StudentPathwayPlanner({ studentData }: StudentPathwayPlannerProp
       icon: Trophy,
       category: 'Leadership & Activities',
       estimatedTime: '3-6 months',
-      resources: ['Current club leadership', 'Faculty advisors', 'Student government']
+      resources: ['Current society leadership', 'Faculty coordinators', 'Student Representative Council', 'House system']
     });
 
     // Medium-term steps (1-2 years)
@@ -159,21 +159,21 @@ export function StudentPathwayPlanner({ studentData }: StudentPathwayPlannerProp
       icon: Briefcase,
       category: 'Career Preparation',
       estimatedTime: 'Summer/semester',
-      resources: ['Indeed internships', 'LinkedIn', 'Network connections', 'Career services']
+      resources: ['SEEK internships', 'LinkedIn', 'Industry contacts', 'School career services', 'IndustryLink programs']
     });
 
     steps.push({
-      id: 'standardized-tests',
-      title: 'Excel in Standardized Tests',
-      description: 'Prepare for and take SAT/ACT with target scores for desired colleges',
+      id: 'year-12-excellence',
+      title: 'Excel in Year 12 & ATAR',
+      description: 'Achieve strong Year 12 results for target ATAR score and university admission',
       type: 'milestone',
       timeline: 'medium-term',
       priority: 'high',
       completed: false,
       icon: FileText,
-      category: 'College Preparation',
-      estimatedTime: '6-12 months prep',
-      resources: ['Khan Academy SAT', 'Official prep books', 'Practice tests', 'Tutoring']
+      category: 'University Preparation',
+      estimatedTime: 'Full Year 12',
+      resources: ['VCE/HSC study guides', 'Practice exams', 'Study groups', 'Private tutoring', 'ATAR calculator']
     });
 
     steps.push({
@@ -192,23 +192,23 @@ export function StudentPathwayPlanner({ studentData }: StudentPathwayPlannerProp
 
     // Long-term steps (2+ years)
     steps.push({
-      id: 'college-applications',
-      title: 'Apply to Target Colleges',
-      description: 'Complete applications for colleges aligned with career goals',
+      id: 'university-applications',
+      title: 'Apply to Target Universities',
+      description: 'Complete VTAC/UAC applications and consider early entry programs for universities aligned with career goals',
       type: 'application',
       timeline: 'long-term',
       priority: 'high',
       completed: false,
       icon: GraduationCap,
-      category: 'College Preparation',
+      category: 'University Preparation',
       estimatedTime: '6 months process',
-      resources: ['Common Application', 'College websites', 'Application essays', 'Letters of recommendation']
+      resources: ['VTAC/UAC websites', 'University websites', 'Personal statements', 'Academic references', 'Early entry programs']
     });
 
     steps.push({
       id: 'scholarship-search',
-      title: 'Secure Scholarships & Funding',
-      description: 'Apply for scholarships and financial aid opportunities',
+      title: 'Secure Scholarships & Financial Support',
+      description: 'Apply for scholarships, youth allowance, and university financial aid opportunities',
       type: 'application',
       timeline: 'long-term',
       priority: 'high',
@@ -216,7 +216,7 @@ export function StudentPathwayPlanner({ studentData }: StudentPathwayPlannerProp
       icon: Award,
       category: 'Financial Planning',
       estimatedTime: 'Ongoing process',
-      resources: ['FAFSA', 'Scholarship databases', 'Local organizations', 'College financial aid']
+      resources: ['StudyAssist.gov.au', 'University scholarship portals', 'Centrelink Youth Allowance', 'Local community scholarships']
     });
 
     steps.push({
@@ -230,7 +230,43 @@ export function StudentPathwayPlanner({ studentData }: StudentPathwayPlannerProp
       icon: Users,
       category: 'Career Preparation',
       estimatedTime: 'Ongoing',
-      resources: ['LinkedIn', 'Professional associations', 'Alumni networks', 'Industry events']
+      resources: ['LinkedIn', 'Professional associations', 'University alumni networks', 'Industry events', 'Australian Industry Group']
+    });
+
+    // Add TAFE pathway if relevant
+    if (studentData.interests.some(interest => 
+      interest.toLowerCase().includes('trade') || 
+      interest.toLowerCase().includes('technical') ||
+      interest.toLowerCase().includes('practical')
+    )) {
+      steps.push({
+        id: 'explore-tafe',
+        title: 'Explore TAFE Pathways',
+        description: 'Research TAFE courses and apprenticeship opportunities in your field',
+        type: 'milestone',
+        timeline: 'short-term',
+        priority: 'medium',
+        completed: false,
+        icon: Briefcase,
+        category: 'Alternative Pathways',
+        estimatedTime: '2-3 months',
+        resources: ['TAFE websites', 'Australian Apprenticeships', 'Industry training organisations', 'MySkills.gov.au']
+      });
+    }
+
+    // Add early entry programs
+    steps.push({
+      id: 'early-entry-programs',
+      title: 'Explore University Early Entry',
+      description: 'Research and apply for early entry programs based on Year 11 results',
+      type: 'application',
+      timeline: 'medium-term',
+      priority: 'medium',
+      completed: false,
+      icon: Star,
+      category: 'University Preparation',
+      estimatedTime: '3-4 months',
+      resources: ['University early entry pages', 'School careers counsellor', 'VTAC/UAC early entry guides']
     });
 
     return steps;
@@ -264,10 +300,10 @@ export function StudentPathwayPlanner({ studentData }: StudentPathwayPlannerProp
   };
 
   const timelineConfig = {
-    immediate: { label: 'Next 3 Months', color: 'bg-red-500', icon: Clock },
-    'short-term': { label: 'Next Year', color: 'bg-orange-500', icon: Calendar },
-    'medium-term': { label: 'Next 2 Years', color: 'bg-blue-500', icon: Target },
-    'long-term': { label: 'Long Term', color: 'bg-green-500', icon: Star }
+    immediate: { label: 'This Term', color: 'bg-red-500', icon: Clock },
+    'short-term': { label: 'This Year', color: 'bg-orange-500', icon: Calendar },
+    'medium-term': { label: 'Year 12 & Beyond', color: 'bg-blue-500', icon: Target },
+    'long-term': { label: 'University/Career', color: 'bg-green-500', icon: Star }
   };
 
   return (
@@ -282,7 +318,7 @@ export function StudentPathwayPlanner({ studentData }: StudentPathwayPlannerProp
                 Your Personalized Career Pathway
               </CardTitle>
               <CardDescription>
-                A step-by-step roadmap to achieve your goal of becoming a {studentData.careerAspiration}
+                A step-by-step roadmap designed for Australian secondary students to achieve your goal of becoming a {studentData.careerAspiration}
               </CardDescription>
             </div>
             <div className="text-right">

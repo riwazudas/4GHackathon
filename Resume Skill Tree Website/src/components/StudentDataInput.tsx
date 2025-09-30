@@ -24,13 +24,19 @@ export function StudentDataInput({ onDataSubmit }: StudentDataInputProps) {
     // Academic Performance
     subjects: {
       mathematics: '',
-      science: '',
       english: '',
-      socialStudies: '',
+      chemistry: '',
+      physics: '',
+      biology: '',
+      economics: '',
+      history: '',
+      geography: '',
+      informationTechnology: '',
+      languages: '',
       arts: '',
-      languages: ''
+      physicalEducation: ''
     },
-    gpa: '',
+    gpa: '', // Will represent ATAR estimate or current average
     academicRank: '',
     
     // Extracurricular Activities

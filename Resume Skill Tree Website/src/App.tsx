@@ -5,10 +5,11 @@ import { CollegeCareerRecommendations } from './components/CollegeCareerRecommen
 import { MarketTrendsAnalysis } from './components/MarketTrendsAnalysis';
 import { StudentPathwayPlanner } from './components/StudentPathwayPlanner';
 import { DataSourceStatus } from './components/DataSourceStatus';
+import { AICareerAdvisor } from './components/AICareerAdvisor';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
 import { Badge } from './components/ui/badge';
-import { GraduationCap, Brain, Target, TrendingUp, Star, Users, BookOpen, Lightbulb, Map } from 'lucide-react';
+import { GraduationCap, Brain, Target, TrendingUp, Star, Users, BookOpen, Lightbulb, Map, MessageCircle } from 'lucide-react';
 
 interface StudentData {
   name: string;
@@ -57,7 +58,7 @@ export default function App() {
           </div>
 
           {/* Features Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-12">
             <Card className="text-center">
               <CardHeader>
                 <Map className="h-8 w-8 mx-auto mb-2 text-emerald-600" />
@@ -66,6 +67,18 @@ export default function App() {
               <CardContent>
                 <CardDescription>
                   Step-by-step personalized roadmap with actionable goals and milestones to achieve your career aspirations
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center">
+              <CardHeader>
+                <MessageCircle className="h-8 w-8 mx-auto mb-2 text-cyan-600" />
+                <CardTitle className="text-lg">AI Career Advisor</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Chat with an AI expert in your field to get personalized advice about skills, pathways, and opportunities
                 </CardDescription>
               </CardContent>
             </Card>
@@ -140,9 +153,9 @@ export default function App() {
                   <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
                     <Brain className="h-6 w-6 text-indigo-600" />
                   </div>
-                  <h4 className="font-medium mb-2">AI Analysis</h4>
+                  <h4 className="font-medium mb-2">AI Analysis & Advice</h4>
                   <p className="text-sm text-muted-foreground">
-                    Our AI analyzes your strengths, interests, and potential career matches
+                    Our AI analyzes your strengths and provides expert career advice through interactive chat
                   </p>
                 </div>
                 
@@ -265,10 +278,14 @@ export default function App() {
 
         {/* Main Content */}
         <Tabs defaultValue="pathway" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="pathway" className="flex items-center gap-2">
               <Map className="h-4 w-4" />
               Career Pathway
+            </TabsTrigger>
+            <TabsTrigger value="advisor" className="flex items-center gap-2">
+              <MessageCircle className="h-4 w-4" />
+              AI Career Advisor
             </TabsTrigger>
             <TabsTrigger value="strengths" className="flex items-center gap-2">
               <Brain className="h-4 w-4" />
@@ -290,6 +307,10 @@ export default function App() {
 
           <TabsContent value="pathway" className="space-y-6">
             <StudentPathwayPlanner studentData={studentData} />
+          </TabsContent>
+
+          <TabsContent value="advisor" className="space-y-6">
+            <AICareerAdvisor studentData={studentData} />
           </TabsContent>
 
           <TabsContent value="strengths" className="space-y-6">

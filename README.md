@@ -104,12 +104,6 @@ firebase.json         # Firebase Hosting configuration
 
 ---
 
-## License
-
-This project is licensed under the MIT License.
-
----
-
 ## Attributions
 
 See [src/Attributions.md](src/Attributions.md) for third-party libraries and resources used.
